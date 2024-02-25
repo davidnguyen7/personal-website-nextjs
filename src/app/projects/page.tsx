@@ -1,4 +1,5 @@
 import projects from './projects';
+import Link from 'next/link';
 
 export default function Projects() {
   return (
@@ -6,7 +7,15 @@ export default function Projects() {
       {projects.map(project => {
         return (
           <div key={project.name}>
-            <div className="text-lg font-bold">{project.name}</div>
+            {project.link ? 
+              <Link 
+                className="text-lg font-bold hover:underline"
+                href="https://world-map-react-mauve.vercel.app/"
+                target="_blank"
+              >
+                {project.name}
+              </Link> 
+            : <div className="text-lg font-bold">{project.name}</div>}
             <div className="mt-2 dark:text-gray-400">{project.description}</div>
             <div className="mt-4 flex flex-wrap gap-2">
               {project.technologies.map(technology => {
@@ -19,6 +28,7 @@ export default function Projects() {
                 );
               })}
             </div>
+            
           </div>
         );
       })}
