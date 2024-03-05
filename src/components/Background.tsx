@@ -1,23 +1,26 @@
 'use client';
 
 import { Canvas, useFrame } from "@react-three/fiber";
-import { EffectComposer } from "@react-three/postprocessing";
+import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { Effect } from "postprocessing";
-import { forwardRef, useMemo, useRef } from "react";
+import { forwardRef, useMemo, useRef, useState } from "react";
 import { Group, Mesh } from "three";
 
 const fragmentCode = /* glsl */`
-    mat4 ditherMatrix = mat4(
-      vec4(00.0/16.0, 12.0/16.0, 03.0/16.0, 15.0/16.0),
-      vec4(08.0/16.0, 04.0/16.0, 11.0/16.0, 07.0/16.0),
-      vec4(02.0/16.0, 14.0/16.0, 01.0/16.0, 13.0/16.0),
-      vec4(10.0/16.0, 06.0/16.0, 09.0/16.0, 05.0/16.0)
+    #define pixel_per_pixels 2.
+
+    const vec4 COL_1 = vec4(1);
+    const vec4 COL_2 = vec4(0, 0, 0, 1);
+
+    const mat4 ditherMatrix = mat4(
+      vec4(0.0, 0.75, 0.1875, 0.9375),
+      vec4(0.5, 0.25, 0.6875, 0.4375),
+      vec4(0.125, 0.875, 0.0625, 0.8125),
+      vec4(0.625, 0.375, 0.5625, 0.3125)
     );
 
-    const float pixel_per_pixels = 2.;
-
     void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {
-      vec2 coord = uv * resolution;
+      vec2 coord = floor(uv * resolution);
       vec2 pixelcoord = coord - mod(coord, pixel_per_pixels);
 
       vec4 col = texture(inputBuffer,pixelcoord/resolution);
@@ -27,7 +30,7 @@ const fragmentCode = /* glsl */`
         [int(mod(mod(pixelcoord.x, pixel_per_pixels*4.)/pixel_per_pixels, 4.))]
         [int(mod(mod(pixelcoord.y, pixel_per_pixels*4.)/pixel_per_pixels, 4.))];
 
-      outputColor = lum > bayerLum ? vec4(1) : vec4(0);
+      outputColor = lum > bayerLum ? COL_1 : COL_2;
     }
 `
 
@@ -79,6 +82,7 @@ function Scene() {
 }
 
 export default function Background() {
+
   return (
     <div className={'fixed -z-10 w-full h-full opacity-50'}>
         <Canvas shadows orthographic camera={{zoom: 100, position: [0, 0, 100]}}>
@@ -87,6 +91,7 @@ export default function Background() {
             <Scene />
             <EffectComposer>
               <DitherEffect />
+              <Bloom intensity={2} luminanceThreshold={0.1}/>
             </EffectComposer>
         </Canvas>
     </div>
