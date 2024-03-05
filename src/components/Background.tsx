@@ -85,7 +85,7 @@ export default function Background() {
 
   return (
     <div className={'fixed -z-10 w-full h-full opacity-50'}>
-        <Canvas shadows orthographic camera={{zoom: 100, position: [0, 0, 100]}}>
+        <Canvas shadows orthographic camera={{zoom: 100, position: [0, 0, 100]}} dpr={[0.5, 1]}>
             <ambientLight color={0xffffff}intensity={1} />
             <directionalLight color={0xffffff} intensity={1} />
             <Scene />
