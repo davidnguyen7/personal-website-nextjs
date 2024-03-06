@@ -3,8 +3,9 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { Effect } from "postprocessing";
-import { forwardRef, useMemo, useRef, useState } from "react";
-import { Group, Mesh } from "three";
+import { forwardRef, useMemo, useRef } from "react";
+import { useMediaQuery } from "react-responsive";
+import { Color, ColorRepresentation, Group, Mesh, Uniform } from "three";
 
 const fragmentCode = /* glsl */`
     #define pixel_per_pixels 2.
@@ -42,9 +43,40 @@ class DitherEffectImpl extends Effect {
 
 // eslint-disable-next-line react/display-name
 const DitherEffect = forwardRef(({}, ref) => {
-  const effect = useMemo(() => new DitherEffectImpl(), [])
+  const effect = useMemo(() => new DitherEffectImpl(), []);
   return <primitive ref={ref} object={effect} dispose={null} />
 })
+
+const twoToneFragmentCode = /* glsl */`
+  uniform vec3 color_1;
+  uniform vec3 color_2;
+
+  void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {
+      float lum = dot(inputColor.rgb, vec3(0.2126, 0.7152, 0.722));
+      outputColor = vec4(mix(color_1, color_2, lum), 1);
+  }
+`
+
+class TwoToneEffectImpl extends Effect {
+  constructor(color1: ColorRepresentation, color2: ColorRepresentation) {
+    super("TwoToneEffect", twoToneFragmentCode, {
+      uniforms: new Map([
+        ["color_1", new Uniform(new Color(color1))],
+        ["color_2", new Uniform(new Color(color2))]
+      ])
+    });
+  }
+}
+
+// eslint-disable-next-line react/display-name
+const TwoToneEffect = forwardRef(({color1, color2}: {
+    color1: ColorRepresentation,
+    color2: ColorRepresentation
+  }, ref) => {
+    const effect = useMemo(() => new TwoToneEffectImpl(color1, color2), [color1, color2]);
+    return <primitive ref={ref} object={effect} dispose={null} />
+  }
+);
 
 function SpinningMesh({position = [0, 0, 0], children}: {position: [x: number, y: number, z: number], children?: React.ReactNode} ) {
     const meshRef = useRef<Mesh>(null!);
@@ -82,6 +114,9 @@ function Scene() {
 }
 
 export default function Background() {
+  const isDarkMode = useMediaQuery({
+    query: "(prefers-color-scheme: dark)"
+  });
 
   return (
     <div className={'fixed -z-10 w-full h-full opacity-50'}>
@@ -89,9 +124,10 @@ export default function Background() {
             <ambientLight color={0xffffff}intensity={1} />
             <directionalLight color={0xffffff} intensity={1} />
             <Scene />
-            <EffectComposer>
+            <EffectComposer multisampling={0}>
               <DitherEffect />
-              <Bloom intensity={2} luminanceThreshold={0.1}/>
+              <Bloom intensity={isDarkMode ? 1 : 0} luminanceThreshold={0}/>
+              <TwoToneEffect color1={isDarkMode ? "#000000" : "#ffffff"} color2={isDarkMode ? "#ffffff" : "#000000"} />
             </EffectComposer>
         </Canvas>
     </div>
