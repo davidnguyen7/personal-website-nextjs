@@ -21,7 +21,7 @@ export default function Projects() {
               {project.technologies.map(technology => {
                 return (
                   <div
-                    className="rounded-full whitespace-nowrap bg-gray-300 dark:bg-gray-600 bg-opacity-25 p-1 px-4 text-sm"
+                    className="rounded-full whitespace-nowrap bg-gray-300 dark:bg-gray-600 !bg-opacity-25 p-1 px-4 text-sm"
                     key={technology}>
                     {technology}
                   </div>
