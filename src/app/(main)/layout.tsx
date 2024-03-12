@@ -5,9 +5,9 @@ import NavLink from '../../components/NavLink';
 import {Analytics} from '@vercel/analytics/react';
 import {SpeedInsights} from '@vercel/speed-insights/next';
 import Background from '@/components/Background';
-import { client } from '@/cms/client';
-import { groq } from 'next-sanity';
-import { Settings } from '@/cms/schema/singletons/Settings';
+import {client} from '@/cms/client';
+import {groq} from 'next-sanity';
+import {Settings} from '@/cms/schema/singletons/Settings';
 import LinkedinLink from '@/components/socialmedia/LinkedinLink';
 import GithubLink from '@/components/socialmedia/GithubLink';
 
@@ -15,7 +15,8 @@ const inter = Inter({subsets: ['latin']});
 
 export const metadata: Metadata = {
   title: 'David Nguyen',
-  description: "The digital home of David Nguyen, a Sydney-based software engineer.",
+  description:
+    'The digital home of David Nguyen, a Sydney-based software engineer.',
 };
 
 export default async function RootLayout({
@@ -23,7 +24,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const settings = await client.fetch<Settings>(groq`*[_type == "settings"][0]`);
+  const settings = await client.fetch<Settings>(
+    groq`*[_type == "settings"][0]`,
+  );
   return (
     <html lang="en">
       <body
@@ -45,7 +48,9 @@ export default async function RootLayout({
               A software engineer based in Sydney.
             </div>
             <div className="mt-4 flex flex-wrap gap-4">
-              {settings?.linkedin ? <LinkedinLink id={settings.linkedin} /> : null}
+              {settings?.linkedin ? (
+                <LinkedinLink id={settings.linkedin} />
+              ) : null}
               {settings?.github ? <GithubLink id={settings.github} /> : null}
             </div>
           </div>
@@ -54,7 +59,6 @@ export default async function RootLayout({
             <NavLink href="/projects">Projects</NavLink>
             <NavLink href="/blog">Blog</NavLink>
           </nav>
-          
           {children}
         </div>
         <Analytics />

@@ -1,13 +1,13 @@
 'use client';
 
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Bloom, EffectComposer } from "@react-three/postprocessing";
-import { Effect } from "postprocessing";
-import { forwardRef, useMemo, useRef } from "react";
-import { useMediaQuery } from "react-responsive";
-import { Color, ColorRepresentation, Group, Mesh, Uniform } from "three";
+import {Canvas, useFrame} from '@react-three/fiber';
+import {Bloom, EffectComposer} from '@react-three/postprocessing';
+import {Effect} from 'postprocessing';
+import {forwardRef, useMemo, useRef} from 'react';
+import {useMediaQuery} from 'react-responsive';
+import {Color, ColorRepresentation, Group, Mesh, Uniform} from 'three';
 
-const fragmentCode = /* glsl */`
+const fragmentCode = /* glsl */ `
     #define pixel_per_pixels 2.
 
     const vec4 COL_1 = vec4(1);
@@ -33,21 +33,21 @@ const fragmentCode = /* glsl */`
 
       outputColor = lum > bayerLum ? COL_1 : COL_2;
     }
-`
+`;
 
 class DitherEffectImpl extends Effect {
   constructor() {
-    super("DitherEffect", fragmentCode);
+    super('DitherEffect', fragmentCode);
   }
 }
 
 // eslint-disable-next-line react/display-name
 const DitherEffect = forwardRef(({}, ref) => {
   const effect = useMemo(() => new DitherEffectImpl(), []);
-  return <primitive ref={ref} object={effect} dispose={null} />
-})
+  return <primitive ref={ref} object={effect} dispose={null} />;
+});
 
-const twoToneFragmentCode = /* glsl */`
+const twoToneFragmentCode = /* glsl */ `
   uniform vec3 color_1;
   uniform vec3 color_2;
 
@@ -55,41 +55,57 @@ const twoToneFragmentCode = /* glsl */`
       float lum = dot(inputColor.rgb, vec3(0.2126, 0.7152, 0.722));
       outputColor = vec4(mix(color_1, color_2, lum), 1);
   }
-`
+`;
 
 class TwoToneEffectImpl extends Effect {
   constructor(color1: ColorRepresentation, color2: ColorRepresentation) {
-    super("TwoToneEffect", twoToneFragmentCode, {
+    super('TwoToneEffect', twoToneFragmentCode, {
       uniforms: new Map([
-        ["color_1", new Uniform(new Color(color1))],
-        ["color_2", new Uniform(new Color(color2))]
-      ])
+        ['color_1', new Uniform(new Color(color1))],
+        ['color_2', new Uniform(new Color(color2))],
+      ]),
     });
   }
 }
 
 // eslint-disable-next-line react/display-name
-const TwoToneEffect = forwardRef(({color1, color2}: {
-    color1: ColorRepresentation,
-    color2: ColorRepresentation
-  }, ref) => {
-    const effect = useMemo(() => new TwoToneEffectImpl(color1, color2), [color1, color2]);
-    return <primitive ref={ref} object={effect} dispose={null} />
-  }
+const TwoToneEffect = forwardRef(
+  (
+    {
+      color1,
+      color2,
+    }: {
+      color1: ColorRepresentation;
+      color2: ColorRepresentation;
+    },
+    ref,
+  ) => {
+    const effect = useMemo(
+      () => new TwoToneEffectImpl(color1, color2),
+      [color1, color2],
+    );
+    return <primitive ref={ref} object={effect} dispose={null} />;
+  },
 );
 
-function SpinningMesh({position = [0, 0, 0], children}: {position: [x: number, y: number, z: number], children?: React.ReactNode} ) {
-    const meshRef = useRef<Mesh>(null!);
+function SpinningMesh({
+  position = [0, 0, 0],
+  children,
+}: {
+  position: [x: number, y: number, z: number];
+  children?: React.ReactNode;
+}) {
+  const meshRef = useRef<Mesh>(null!);
 
-    useFrame((_, delta) => {
-        meshRef.current.rotation.x += delta;
-        meshRef.current.rotation.y += delta;
-    })
-    return (
-        <mesh ref={meshRef} position={position}>
-          {children}
-        </mesh>
-    )
+  useFrame((_, delta) => {
+    meshRef.current.rotation.x += delta;
+    meshRef.current.rotation.y += delta;
+  });
+  return (
+    <mesh ref={meshRef} position={position}>
+      {children}
+    </mesh>
+  );
 }
 
 function Scene() {
@@ -97,7 +113,7 @@ function Scene() {
 
   useFrame((state, delta) => {
     groupRef.current.rotation.z += delta;
-  })
+  });
 
   return (
     <group ref={groupRef}>
@@ -106,30 +122,37 @@ function Scene() {
         <meshStandardMaterial />
       </SpinningMesh>
       <SpinningMesh position={[0, -2, 0]}>
-        <sphereGeometry args={[0.75]}/>
+        <sphereGeometry args={[0.75]} />
         <meshStandardMaterial />
       </SpinningMesh>
     </group>
-  )
+  );
 }
 
 export default function Background() {
   const isDarkMode = useMediaQuery({
-    query: "(prefers-color-scheme: dark)"
+    query: '(prefers-color-scheme: dark)',
   });
 
   return (
     <div className={'fixed -z-10 w-full h-full opacity-50'}>
-        <Canvas shadows orthographic camera={{zoom: 100, position: [0, 0, 100]}} dpr={[0.5, 1]}>
-            <ambientLight color={0xffffff}intensity={1} />
-            <directionalLight color={0xffffff} intensity={1} />
-            <Scene />
-            <EffectComposer multisampling={0}>
-              <DitherEffect />
-              <Bloom intensity={isDarkMode ? 1 : 0} luminanceThreshold={0}/>
-              <TwoToneEffect color1={isDarkMode ? "#000000" : "#ffffff"} color2={isDarkMode ? "#ffffff" : "#000000"} />
-            </EffectComposer>
-        </Canvas>
+      <Canvas
+        shadows
+        orthographic
+        camera={{zoom: 100, position: [0, 0, 100]}}
+        dpr={[0.5, 1]}>
+        <ambientLight color={0xffffff} intensity={1} />
+        <directionalLight color={0xffffff} intensity={1} />
+        <Scene />
+        <EffectComposer multisampling={0}>
+          <DitherEffect />
+          <Bloom intensity={isDarkMode ? 1 : 0} luminanceThreshold={0} />
+          <TwoToneEffect
+            color1={isDarkMode ? '#000000' : '#ffffff'}
+            color2={isDarkMode ? '#ffffff' : '#000000'}
+          />
+        </EffectComposer>
+      </Canvas>
     </div>
-  )
+  );
 }
