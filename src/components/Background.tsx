@@ -135,7 +135,7 @@ export default function Background() {
   });
 
   return (
-    <div className={'fixed -z-10 w-full h-full opacity-50'}>
+    <div className={'fixed -z-10 w-full h-screen opacity-50'}>
       <Canvas
         shadows
         orthographic
