@@ -3,7 +3,9 @@ import Link from 'next/link';
 export default function GithubLink({id}: {id: string}) {
   return (
     <Link
+      aria-label="github"
       className={`transition-colors hover:fill-black active:fill-black dark:hover:fill-white dark:active:fill-white fill-gray-500 dark:fill-gray-400`}
+      target="_blank"
       href={`https://github.com/${id}/`}>
       <svg
         xmlns="http://www.w3.org/2000/svg"

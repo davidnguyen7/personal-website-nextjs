@@ -10,13 +10,21 @@ export default async function Projects() {
     <main className="flex flex-col gap-8">
       {projects?.map(project => {
         return (
-          <div key={project.name}>
+          <div key={project.name} className="text-black dark:text-white">
             {project.link ? (
               <Link
-                className="text-lg font-bold hover:underline"
+                className="text-lg font-bold hover:underline group"
                 href="https://world-map-react-mauve.vercel.app/"
                 target="_blank">
                 {project.name}
+                <svg
+                  className="transition-transform inline ml-2 h-3 w-3 group-hover:translate-x-1 group-hover:-translate-y-1"
+                  viewBox="0 0 12 12"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M2.07102 11.3494L0.963068 10.2415L9.2017 1.98864H2.83807L2.85227 0.454545H11.8438V9.46023H10.2955L10.3097 3.09659L2.07102 11.3494Z"
+                    fill="currentColor"></path>
+                </svg>
               </Link>
             ) : (
               <div className="text-lg font-bold">{project.name}</div>

@@ -32,7 +32,7 @@ export default async function RootLayout({
       <body
         className={
           inter.className +
-          ' text-black bg-white dark:text-white dark:bg-black transition-colors duration-150'
+          ' text-gray-600 dark:text-gray-400 bg-white dark:bg-black transition-colors duration-150'
         }>
         <Background />
         <div className="container mx-auto flex min-h-screen flex-col space-y-10 p-12 lg:max-w-4xl">

@@ -2,91 +2,11 @@
 
 import {Canvas, useFrame} from '@react-three/fiber';
 import {Bloom, EffectComposer} from '@react-three/postprocessing';
-import {Effect} from 'postprocessing';
-import {forwardRef, useMemo, useRef} from 'react';
+import {useRef} from 'react';
 import {useMediaQuery} from 'react-responsive';
-import {Color, ColorRepresentation, Group, Mesh, Uniform} from 'three';
-
-const fragmentCode = /* glsl */ `
-    #define pixel_per_pixels 2.
-
-    const vec4 COL_1 = vec4(1);
-    const vec4 COL_2 = vec4(0, 0, 0, 1);
-
-    const mat4 ditherMatrix = mat4(
-      vec4(0.0, 0.75, 0.1875, 0.9375),
-      vec4(0.5, 0.25, 0.6875, 0.4375),
-      vec4(0.125, 0.875, 0.0625, 0.8125),
-      vec4(0.625, 0.375, 0.5625, 0.3125)
-    );
-
-    void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {
-      vec2 coord = floor(uv * resolution);
-      vec2 pixelcoord = coord - mod(coord, pixel_per_pixels);
-
-      vec4 col = texture(inputBuffer,pixelcoord/resolution);
-      float lum = dot(col.rgb, vec3(0.2126, 0.7152, 0.722));
-
-      float bayerLum = ditherMatrix
-        [int(mod(mod(pixelcoord.x, pixel_per_pixels*4.)/pixel_per_pixels, 4.))]
-        [int(mod(mod(pixelcoord.y, pixel_per_pixels*4.)/pixel_per_pixels, 4.))];
-
-      outputColor = lum > bayerLum ? COL_1 : COL_2;
-    }
-`;
-
-class DitherEffectImpl extends Effect {
-  constructor() {
-    super('DitherEffect', fragmentCode);
-  }
-}
-
-// eslint-disable-next-line react/display-name
-const DitherEffect = forwardRef(({}, ref) => {
-  const effect = useMemo(() => new DitherEffectImpl(), []);
-  return <primitive ref={ref} object={effect} dispose={null} />;
-});
-
-const twoToneFragmentCode = /* glsl */ `
-  uniform vec3 color_1;
-  uniform vec3 color_2;
-
-  void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {
-      float lum = dot(inputColor.rgb, vec3(0.2126, 0.7152, 0.722));
-      outputColor = vec4(mix(color_1, color_2, lum), 1);
-  }
-`;
-
-class TwoToneEffectImpl extends Effect {
-  constructor(color1: ColorRepresentation, color2: ColorRepresentation) {
-    super('TwoToneEffect', twoToneFragmentCode, {
-      uniforms: new Map([
-        ['color_1', new Uniform(new Color(color1))],
-        ['color_2', new Uniform(new Color(color2))],
-      ]),
-    });
-  }
-}
-
-// eslint-disable-next-line react/display-name
-const TwoToneEffect = forwardRef(
-  (
-    {
-      color1,
-      color2,
-    }: {
-      color1: ColorRepresentation;
-      color2: ColorRepresentation;
-    },
-    ref,
-  ) => {
-    const effect = useMemo(
-      () => new TwoToneEffectImpl(color1, color2),
-      [color1, color2],
-    );
-    return <primitive ref={ref} object={effect} dispose={null} />;
-  },
-);
+import {Group, Mesh} from 'three';
+import {DitherEffect} from '@/threejs/effects/DitherEffect';
+import {TwoToneEffect} from '@/threejs/effects/TwoToneEffect';
 
 function SpinningMesh({
   position = [0, 0, 0],
@@ -135,7 +55,7 @@ export default function Background() {
   });
 
   return (
-    <div className={'fixed -z-10 w-full h-screen opacity-50'}>
+    <div className={'fixed -z-10 w-full h-screen opacity-25'}>
       <Canvas
         shadows
         orthographic
