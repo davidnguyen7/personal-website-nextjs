@@ -6,7 +6,6 @@ import {useRef} from 'react';
 import {useMediaQuery} from 'react-responsive';
 import {Group, Mesh} from 'three';
 import {DitherEffect} from '@/threejs/effects/DitherEffect';
-import {TwoToneEffect} from '@/threejs/effects/TwoToneEffect';
 
 function SpinningMesh({
   position = [0, 0, 0],
@@ -55,22 +54,22 @@ export default function Background() {
   });
 
   return (
-    <div className={'fixed -z-10 w-full h-screen opacity-25'}>
+    <div className={'fixed -z-10 w-full h-screen opacity-35'}>
       <Canvas
         shadows
         orthographic
         camera={{zoom: 100, position: [0, 0, 100]}}
         dpr={[0.5, 1]}>
+        <color attach={'background'} args={['#000000']} />
         <ambientLight color={0xffffff} intensity={1} />
         <directionalLight color={0xffffff} intensity={1} />
         <Scene />
         <EffectComposer multisampling={0}>
-          <DitherEffect />
-          <Bloom intensity={isDarkMode ? 1 : 0} luminanceThreshold={0} />
-          <TwoToneEffect
-            color1={isDarkMode ? '#000000' : '#ffffff'}
-            color2={isDarkMode ? '#ffffff' : '#000000'}
+          <DitherEffect
+            color1={isDarkMode ? '#FFFFFF' : '#000000'}
+            color2={isDarkMode ? '#000000' : '#FFFFFF'}
           />
+          <Bloom intensity={isDarkMode ? 1 : 0} luminanceThreshold={0} />
         </EffectComposer>
       </Canvas>
     </div>
