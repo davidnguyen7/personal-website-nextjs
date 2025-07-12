@@ -1,20 +1,11 @@
 import {Effect} from 'postprocessing';
 import {forwardRef, useMemo} from 'react';
-import {ColorRepresentation, Uniform, Color} from 'three';
+import {Color, ColorRepresentation, Uniform} from 'three';
+import SHADER_CODE from './glsl/DitherEffect.glsl';
 
-const fragmentCode = /* glsl */ `
-  uniform vec3 color_1;
-  uniform vec3 color_2;
-
-  void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {
-      float lum = dot(inputColor.rgb, vec3(0.2126, 0.7152, 0.722));
-      outputColor = vec4(mix(color_1, color_2, lum), 1);
-  }
-`;
-
-class TwoToneEffectImpl extends Effect {
+export class DitherEffectImpl extends Effect {
   constructor(color1: ColorRepresentation, color2: ColorRepresentation) {
-    super('TwoToneEffect', fragmentCode, {
+    super('DitherEffect', SHADER_CODE, {
       uniforms: new Map([
         ['color_1', new Uniform(new Color(color1))],
         ['color_2', new Uniform(new Color(color2))],
@@ -24,7 +15,7 @@ class TwoToneEffectImpl extends Effect {
 }
 
 // eslint-disable-next-line react/display-name
-export const TwoToneEffect = forwardRef(
+export const DitherEffect = forwardRef(
   (
     {
       color1,
@@ -36,7 +27,7 @@ export const TwoToneEffect = forwardRef(
     ref,
   ) => {
     const effect = useMemo(
-      () => new TwoToneEffectImpl(color1, color2),
+      () => new DitherEffectImpl(color1, color2),
       [color1, color2],
     );
     return <primitive ref={ref} object={effect} dispose={null} />;

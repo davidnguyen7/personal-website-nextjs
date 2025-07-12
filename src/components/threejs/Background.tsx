@@ -4,33 +4,14 @@ import {Canvas, useFrame} from '@react-three/fiber';
 import {Bloom, EffectComposer} from '@react-three/postprocessing';
 import {useRef} from 'react';
 import {useMediaQuery} from 'react-responsive';
-import {Group, Mesh} from 'three';
-import {DitherEffect} from '@/threejs/effects/DitherEffect';
-
-function SpinningMesh({
-  position = [0, 0, 0],
-  children,
-}: {
-  position: [x: number, y: number, z: number];
-  children?: React.ReactNode;
-}) {
-  const meshRef = useRef<Mesh>(null!);
-
-  useFrame((_, delta) => {
-    meshRef.current.rotation.x += delta;
-    meshRef.current.rotation.y += delta;
-  });
-  return (
-    <mesh ref={meshRef} position={position}>
-      {children}
-    </mesh>
-  );
-}
+import {Group} from 'three';
+import {DitherEffect} from '@/components/threejs/effects/DitherEffect';
+import {SpinningMesh} from './SpinningMesh';
 
 function Scene() {
   const groupRef = useRef<Group>(null!);
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     groupRef.current.rotation.z += delta;
   });
 
