@@ -3,7 +3,7 @@ import {forwardRef, useMemo} from 'react';
 import {Color, ColorRepresentation, Uniform} from 'three';
 import SHADER_CODE from './glsl/DitherEffect.glsl';
 
-export class DitherEffectImpl extends Effect {
+class DitherEffectImpl extends Effect {
   constructor(color1: ColorRepresentation, color2: ColorRepresentation) {
     super('DitherEffect', SHADER_CODE, {
       uniforms: new Map([
