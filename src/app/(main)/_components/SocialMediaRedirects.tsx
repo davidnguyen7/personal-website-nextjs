@@ -1,7 +1,6 @@
 import Link from 'next/link';
 
-const LINK_CLASS =
-  'transition-colors hover:fill-black active:fill-black dark:hover:fill-white dark:active:fill-white fill-gray-500 dark:fill-gray-400';
+const LINK_CLASS = 'social_media-icon';
 
 function GithubLink({id}: {id: string}) {
   return (
@@ -39,17 +38,20 @@ function LinkedinLink({id}: {id: string}) {
   );
 }
 
-export default function SocialMediaRedirects({
-  linkedin,
-  github,
-}: {
+export interface SocialMedia {
   linkedin?: string;
   github?: string;
+}
+
+export default function SocialMediaRedirects({
+  socialMedia,
+}: {
+  socialMedia?: SocialMedia;
 }) {
-  return (
-    <div className="mt-4 flex flex-wrap gap-4">
-      {!!linkedin && <LinkedinLink id={linkedin} />}
-      {!!github && <GithubLink id={github} />}
+  return socialMedia ? (
+    <div className="social_media-redirects">
+      {!!socialMedia.linkedin && <LinkedinLink id={socialMedia.linkedin} />}
+      {!!socialMedia.github && <GithubLink id={socialMedia.github} />}
     </div>
-  );
+  ) : null;
 }

@@ -1,23 +1,33 @@
-export default function Home() {
+import './page.css';
+
+import Background from './_components/Background';
+import NavigationBar from './_sections/NavigationBar';
+import TitleSection from './_sections/TitleSection';
+import ProjectsSection from './_sections/ProjectsSection';
+import AboutMeSection from './_sections/AboutMeSection';
+import ContactSection from './_sections/ContactSection';
+
+import {client} from '@/cms/client';
+import {Settings} from '@/cms/schema/singletons/Settings';
+import {groq} from 'next-sanity';
+import {Project} from '@/cms/schema/Project';
+
+export default async function Test() {
+  const settings = await client.fetch<Settings>(
+    groq`*[_type == "settings"][0]`,
+  );
+
+  const projects = await client.fetch<Project[]>(groq`*[_type == "project"]`);
+  const socialMedia = {github: settings.github, linkedin: settings.linkedin};
+
   return (
     <main>
-      <div className="space-y-4">
-        <p>
-          I am a software engineer who&apos;s always eager to learn & program,
-          fortunate enough to have been introduced at a young age.
-        </p>
-        <p>
-          I&apos;ve been currently obsessed with web development - with its
-          potential to make awesome cross-platform experiences that are easily
-          sharable & accessible to others.
-        </p>
-        <p>
-          Wanting to deepen my knowledge of mobile web development, I&apos;ve
-          recently been getting my feet wet within the native mobile space with
-          React Native to help me gain a deeper understanding and appreciation
-          of mobile UI, UX & performance considerations.
-        </p>
-      </div>
+      <NavigationBar />
+      <Background />
+      <TitleSection socialMedia={socialMedia} />
+      <AboutMeSection />
+      <ProjectsSection projects={projects} />
+      <ContactSection socialMedia={socialMedia} />
     </main>
   );
 }
