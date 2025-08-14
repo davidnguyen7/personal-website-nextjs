@@ -1,6 +1,8 @@
 import './page.css';
 
-import Background from './_components/Background';
+import {groq} from 'next-sanity';
+
+import DynamicBackground from './_components/DynamicBackground';
 import NavigationBar from './_sections/NavigationBar';
 import TitleSection from './_sections/TitleSection';
 import ProjectsSection from './_sections/ProjectsSection';
@@ -8,9 +10,8 @@ import AboutMeSection from './_sections/AboutMeSection';
 import ContactSection from './_sections/ContactSection';
 
 import {client} from '@/cms/client';
-import {Settings} from '@/cms/schema/singletons/Settings';
-import {groq} from 'next-sanity';
-import {Project} from '@/cms/schema/Project';
+import {type Settings} from '@/cms/schema/singletons/Settings';
+import {type Project} from '@/cms/schema/Project';
 
 export default async function Test() {
   const settings = await client.fetch<Settings>(
@@ -23,7 +24,7 @@ export default async function Test() {
   return (
     <main>
       <NavigationBar />
-      <Background />
+      <DynamicBackground />
       <TitleSection socialMedia={socialMedia} />
       <AboutMeSection />
       <ProjectsSection projects={projects} />

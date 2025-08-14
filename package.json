@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
+    "@next/bundle-analyzer": "^15.4.6",
     "@react-three/fiber": "^8.15.16",
     "@react-three/postprocessing": "^2.16.0",
     "@vercel/analytics": "^1.1.3",

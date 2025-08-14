@@ -1,8 +1,7 @@
 'use client';
-
 import {useLenis} from 'lenis/react';
 import {useEffect, useState} from 'react';
-import {threshold} from 'three/examples/jsm/nodes/Nodes.js';
+
 interface PageLinksTable {
   [selector: string]: string;
 }
@@ -42,7 +41,6 @@ function PageScrollLink({
 
 export default function NavigationBar() {
   const [activeLink, setActiveLink] = useState<string | null>(null);
-  const lenis = useLenis();
   useEffect(() => {
     const observer = new IntersectionObserver(
       entries => {
