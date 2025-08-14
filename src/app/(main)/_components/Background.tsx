@@ -69,6 +69,8 @@ function Scene({
   const positional_velocity = useRef(new Vector2());
   const rotational_velocity = useRef(0);
 
+  const mouse_world_vec = useRef(new Vector3());
+
   useFrame((state, delta) => {
     // perform mount animation of scene opacity
     if (state.clock.elapsedTime > config.opacity_animation_delay) {
@@ -103,9 +105,9 @@ function Scene({
     group_ref.current.rotation.z += rotational_velocity.current;
 
     // perform position translation
-    const mouseWorldVec = new Vector3(mouse.x, mouse.y, 0)
-      .unproject(state.camera)
-      .multiplyScalar(0.25);
+    mouse_world_vec.current.set(mouse.x, mouse.y, 0);
+    mouse_world_vec.current.unproject(state.camera);
+    mouse_world_vec.current.multiplyScalar(0.25);
 
     const damp_force_x =
       -config.movement_friction *
@@ -114,7 +116,7 @@ function Scene({
     const spring_force_x =
       config.spring_factor *
       -config.movement_stiffness *
-      (group_ref.current.position.x - mouseWorldVec.x);
+      (group_ref.current.position.x - mouse_world_vec.current.x);
     positional_velocity.current.x += spring_force_x + damp_force_x;
     group_ref.current.position.x += positional_velocity.current.x;
 
@@ -125,7 +127,7 @@ function Scene({
     const spring_force_y =
       config.spring_factor *
       -config.movement_stiffness *
-      (group_ref.current.position.y - mouseWorldVec.y);
+      (group_ref.current.position.y - mouse_world_vec.current.y);
     positional_velocity.current.y += spring_force_y + damp_force_y;
     group_ref.current.position.y += positional_velocity.current.y;
   });
