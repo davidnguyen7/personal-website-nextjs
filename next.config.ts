@@ -1,7 +1,7 @@
-/** @type {import('next').NextConfig} */
+import type {NextConfig} from 'next';
 import NextBundleAnalyzer from '@next/bundle-analyzer';
 
-const nextConfig = {
+const nextConfig: NextConfig = {
   transpilePackages: ['three'],
   webpack: config => {
     config.module.rules.push({
@@ -10,6 +10,14 @@ const nextConfig = {
     });
 
     return config;
+  },
+  turbopack: {
+    rules: {
+      '*.glsl': {
+        loaders: ['raw-loader'],
+        as: '*.js',
+      },
+    },
   },
 };
 
