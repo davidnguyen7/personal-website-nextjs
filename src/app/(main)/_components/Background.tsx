@@ -36,6 +36,7 @@ interface SceneConfig {
   rotation_constant_force: number;
   rotation_scroll_factor: number;
   rotation_friction: number;
+  rotation_stiffness: number;
 
   opacity_animation_time: number;
   opacity_animation_delay: number;
@@ -49,8 +50,9 @@ function Scene({
     movement_stiffness: 25,
     movement_friction: 5,
     rotation_constant_force: 8,
-    rotation_scroll_factor: 4,
-    rotation_friction: 10,
+    rotation_scroll_factor: 0.005,
+    rotation_friction: 5,
+    rotation_stiffness: 50,
     opacity_animation_time: 0.5,
     opacity_animation_delay: 0.5,
     friction_factor: 0.1,
@@ -68,6 +70,7 @@ function Scene({
 
   const positional_velocity = useRef(new Vector2());
   const rotational_velocity = useRef(0);
+  const rotation_speed = useRef(0);
 
   const mouse_world_vec = useRef(new Vector3());
 
@@ -94,15 +97,18 @@ function Scene({
 
     // perform rotational translation
     const rotational_force =
-      (config.rotation_constant_force +
+      (rotation_speed.current -
         (lenis?.velocity ?? 0) * config.rotation_scroll_factor) *
-      0.001;
+      -config.rotation_stiffness *
+      config.spring_factor;
     const rotational_damping =
-      -rotational_velocity.current *
+      rotational_velocity.current *
       config.friction_factor *
-      config.rotation_friction;
+      -config.rotation_friction;
     rotational_velocity.current += rotational_force + rotational_damping;
-    group_ref.current.rotation.z += rotational_velocity.current;
+    rotation_speed.current += rotational_velocity.current;
+    group_ref.current.rotation.z +=
+      rotation_speed.current + config.rotation_constant_force * 0.001;
 
     // perform position translation
     mouse_world_vec.current.set(mouse.x, mouse.y, 0);
