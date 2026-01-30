@@ -21,6 +21,7 @@
     "postprocessing": "^6.37.7",
     "react": "^19",
     "react-dom": "^19",
+    "react-markdown": "^10.1.0",
     "react-responsive": "^9.0.2",
     "sanity": "^4.4.1",
     "three": "^0.179.1"

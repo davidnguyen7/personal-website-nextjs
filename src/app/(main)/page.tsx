@@ -20,13 +20,14 @@ export default async function Test() {
 
   const projects = await client.fetch<Project[]>(groq`*[_type == "project"]`);
   const socialMedia = {github: settings.github, linkedin: settings.linkedin};
+  const aboutMeContent = settings.aboutme;
 
   return (
     <main>
       <NavigationBar />
       <DynamicBackground />
       <TitleSection socialMedia={socialMedia} />
-      <AboutMeSection />
+      <AboutMeSection content={aboutMeContent} />
       <ProjectsSection projects={projects} />
       <ContactSection socialMedia={socialMedia} />
     </main>

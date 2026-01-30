@@ -3,6 +3,7 @@ import {defineField, defineType} from 'sanity';
 export interface Settings {
   linkedin: string;
   github: string;
+  aboutme: string;
 }
 
 export default defineType({
@@ -29,6 +30,11 @@ export default defineType({
       type: 'string',
       group: 'social_media',
       initialValue: 'davidnguyen7',
+    }),
+    defineField({
+      name: 'aboutme',
+      title: 'About Me',
+      type: 'text',
     }),
   ],
 });
